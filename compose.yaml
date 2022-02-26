@@ -1,7 +1,7 @@
 version: '3'
 services:
   ui:
-    image: ijazu/vprofile:latest
+    image: ijazu/my-vpro:latest
     ports:
      - "8083:8080"
     restart: always
