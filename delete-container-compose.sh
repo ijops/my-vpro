@@ -9,5 +9,5 @@ if [ $? -eq 1 ]; then
 else
    docker stop $CONTAINER
    docker rm $CONTAINER
-   docker volume prune -f
+   
 fi
