@@ -1,0 +1,11 @@
+---
+-  name: Docker run
+   hosts: production
+   become: true
+   tasks:
+     - name: copy script
+       copy: src=/var/lib/jenkins/workspace/vpro-scripted/delete-container.sh dest=/var/lib/jenkins/ mode=0777
+     - name: execute script to stop and remove containers if exist
+       shell: sh /var/lib/jenkins/delete-container.sh
+     - name: create new container
+       shell: docker container run -itd --name vpro -p 80:8080 ijazu/vpro-scripted:latest

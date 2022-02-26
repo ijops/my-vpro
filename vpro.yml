@@ -1,0 +1,25 @@
+version: '3'
+services:
+  ui:
+    image: ijazu/vprofile:latest
+    ports:
+     - "8083:8080"
+    restart: always
+    depends_on: 
+      - backend
+  backend:
+    image: mysql:5.7.28
+    ports:
+     - "3306:3306"
+    environment:
+            MYSQL_DATABASE: accounts
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: admin123
+            MYSQL_ROOT_PASSWORD: admin123
+    volumes:
+      - ./src/main/resources:/docker-entrypoint-initdb.d
+      - persistent:/var/lib/mysql 
+volumes:
+    persistent:      
+            
+       

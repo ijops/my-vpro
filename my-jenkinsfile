@@ -1,0 +1,118 @@
+pipeline{
+    agent any
+    options {
+  buildDiscarder logRotator(artifactDaysToKeepStr: '2', artifactNumToKeepStr: '10', daysToKeepStr: '', numToKeepStr: '10')
+}
+    stages{
+        stage('SCM checkout'){
+            steps{
+             git branch: 'main', url: 'https://github.com/ijops/vprofile-project.git'   
+            }
+        }
+        
+        stage('code compile'){
+            steps{
+             sh "mvn compile"
+             
+            }
+        }
+        stage('code integrity'){
+            steps{
+             sh "mvn checkstyle:checkstyle"
+             recordIssues(tools: [checkStyle(reportEncoding: 'Big5')])
+            }
+        }
+        
+        stage('pmd'){
+            steps{
+             sh "mvn pmd:pmd"
+             recordIssues(tools: [pmdParser()])
+            }
+        }
+        
+        stage('sonar check') {
+            steps {
+                script {
+                    withSonarQubeEnv(credentialsId: 'sonar') {
+                      sh "mvn sonar:sonar"   
+                }
+                
+                  
+                  timeout(time: 1, unit: 'HOURS') {
+                     def qg = waitForQualityGate()
+                      if (qg.status != 'OK') {
+                           error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                           echo "Build failed due to sonar quality gate failure"
+                      }
+                    }
+                
+                
+                }
+        }
+        
+        }
+
+    stage('TEST'){
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                junit 'target/surefire-reports/*.xml'
+            }}
+        }
+
+	stage('INTEGRATION TEST'){
+            steps {
+                sh 'mvn verify -DskipUnitTests'
+            }
+        }
+       stage('build'){
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+	
+	/* stage('Docker build') {
+            steps {
+                sh "sudo docker build . -t ijazu/vpro:$BUILD_ID -f Dockerfile "
+                sh "sudo docker tag ijazu/vpro:$BUILD_ID ijazu/$JOB_NAME:latest"
+                
+                
+                }
+        } */
+	
+         	/* stage('docker push'){
+		  steps{
+		  withDockerRegistry(credentialsId: 'docker', url: 'https://index.docker.io/v1/') {
+                  sh "docker push ijazu/$JOB_NAME:latest "
+}
+		  
+		  }
+		  } */
+		/* stage('Docker run') {
+            steps {
+	        sh "chmod a+x delete-container.sh"
+	        sh "sh delete-container.sh"
+                sh "sudo docker run -itd --name vpro -p 8083:8080 ijazu/$JOB_NAME:latest " 
+             
+                }
+        } */
+	
+	/* stage('Docker ansible run') {
+            steps {
+	ansiblePlaybook credentialsId: 'prod', disableHostKeyChecking: true, installation: 'system', inventory: 'host.inv', playbook: 'ansible.yaml'
+ 
+
+    }
+    }  */
+    
+        stage('Docker compose ansible run') {
+            steps {
+	ansiblePlaybook credentialsId: 'prod', disableHostKeyChecking: true, installation: 'system', inventory: 'host.inv', playbook: 'ansible-compose.yaml'
+ 
+
+    }
+}
+}
+}
