@@ -18,7 +18,7 @@ services:
         -  MYSQL_PASSWORD=admin123
             
     volumes:
-      - ./src/main/resources:/docker-entrypoint-initdb.d
+      - /var/lib/jenkins/dump:/docker-entrypoint-initdb.d
       - persistent:/var/lib/mysql 
 volumes:
     persistent:  
