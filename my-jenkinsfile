@@ -73,14 +73,14 @@ pipeline{
             }
         }
 	
-	/* stage('Docker build') {
+	 stage('Docker build') {
             steps {
                 sh "sudo docker build . -t ijazu/vpro:$BUILD_ID -f Dockerfile "
                 sh "sudo docker tag ijazu/vpro:$BUILD_ID ijazu/$JOB_NAME:latest"
                 
                 
                 }
-        } */
+        } 
 	
          	 stage('docker push'){
 		  steps{
