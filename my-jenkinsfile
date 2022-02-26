@@ -82,14 +82,15 @@ pipeline{
                 }
         } */
 	
-         	/* stage('docker push'){
+         	 stage('docker push'){
 		  steps{
 		  withDockerRegistry(credentialsId: 'docker', url: 'https://index.docker.io/v1/') {
                   sh "docker push ijazu/$JOB_NAME:latest "
 }
 		  
 		  }
-		  } */
+		  } 
+		  
 		/* stage('Docker run') {
             steps {
 	        sh "chmod a+x delete-container.sh"
