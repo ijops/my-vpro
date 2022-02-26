@@ -6,10 +6,10 @@
      copy: src=/var/lib/jenkins/workspace/my-vpro/delete-container-compose.sh dest=/var/lib/jenkins/ mode=0777
    - name: execute script to stop and remove containers if exist
      shell: sh /var/lib/jenkins/delete-container-compose.sh
-   #- name: copy artifact
-    # copy: src=/var/lib/jenkins/workspace/my-vpro/target/vprofile-v1.war dest=/var/lib/jenkins/
-  # - name: copy dockerfile
-  #   copy: src=/var/lib/jenkins/workspace/my-vpro/Dockerfile dest=/var/lib/jenkins/
+   - name: create folder
+     shell: mkdir -p /var/lib/jenkins/dump  
+   - name: copy artifact
+     copy: src=/var/lib/jenkins/workspace/my-vpro/dump/accountsdb.sql dest=/var/lib/jenkins/dump
    - name: copy compose file
      copy: src=/var/lib/jenkins/workspace/my-vpro/compose.yaml dest=/var/lib/jenkins/ mode=0777
    - name: run compose
